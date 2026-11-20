@@ -13,6 +13,17 @@ React + Vite frontend and an Express backend that stores applications in MongoDB
 
 This starts the frontend and backend together. Vite forwards `/api` requests to `http://localhost:5000`. The backend retries the MongoDB connection every five seconds if MongoDB is still starting.
 
+## Deploy to Vercel
+
+The Vercel build serves the Vite site and rewrites `/api/*` requests to the serverless Express handler in `api/index.js`.
+
+1. In Vercel, set the project Root Directory to the repository root (not `frontend`).
+2. Add these Environment Variables in **Settings → Environment Variables** for Production and Preview: `MONGODB_URI`, `AUTH_SECRET`, `ADMIN_USERNAME`, `ADMIN_PASSWORD`, and `ALLOW_ANY_LOGIN=false`. Copy secret values from your private local `.env`; never commit that file.
+3. Redeploy after adding or changing environment variables.
+4. In MongoDB Atlas, allow the Vercel runtime to connect. Vercel uses dynamic outbound IPs; Atlas's Vercel integration can configure the network access entry automatically. If configuring it manually, understand that `0.0.0.0/0` allows connections from any IP and use a database user with only the required permissions.
+
+After deployment, check `https://YOUR-VERCEL-DOMAIN/api/health`; it should return `database: connected`.
+
 ## API
 
 - `GET /api/health` reports server and MongoDB connection status.
